@@ -1,0 +1,237 @@
+/* =============================================
+   HCG — Kategori Grid Premium v3.0
+   ============================================= */
+
+/* ─── Grid — kolon sayısı dinamik CSS'ten gelir ─── */
+.hcg-grid {
+    display: grid;
+    gap: 14px;
+    margin: 24px 0;
+    /* grid-template-columns: functions.php dinamik CSS'ten override edilir */
+}
+
+/* ─── Kart ─── */
+.hcg-card {
+    --cat-color: var(--color-accent);
+    --c-light:   color-mix(in srgb, var(--cat-color) 12%, #fff);
+    --c-xlight:  color-mix(in srgb, var(--cat-color)  5%, #fff);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26px 14px 20px;
+    gap: 10px;
+    aspect-ratio: 1; /* KARE */
+    background: #fff;
+    border: 1.5px solid #E8EBF4;
+    border-radius: 20px;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform .22s cubic-bezier(.4,0,.2,1),
+                border-color .22s, box-shadow .22s;
+}
+
+/* ── Hover ── */
+.hcg-hover-lift .hcg-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 36px color-mix(in srgb, var(--cat-color) 22%, transparent);
+}
+.hcg-card:hover { border-color: var(--cat-color); text-decoration: none; color: inherit; }
+
+/* ── Üst şerit ── */
+.hcg-top-strip .hcg-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--cat-color);
+    border-radius: 20px 20px 0 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.hcg-top-strip .hcg-card:hover::before { transform: scaleX(1); }
+
+/* ── Arka plan efekti ── */
+.hcg-bg-effect .hcg-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--c-xlight);
+    opacity: 0;
+    transition: opacity .22s;
+    pointer-events: none;
+    border-radius: 20px;
+}
+.hcg-bg-effect .hcg-card:hover::after { opacity: 1; }
+
+.hcg-card__icon,
+.hcg-card__body,
+.hcg-card__arrow,
+.hcg-card__subs { position: relative; z-index: 1; }
+
+/* ─── İkon ─── */
+.hcg-card__icon {
+    width: var(--icon-size, 76px);
+    height: var(--icon-size, 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-light);
+    flex-shrink: 0;
+    transition: background .22s, transform .22s;
+}
+.hcg-icon-circle  .hcg-card__icon { border-radius: 50%; }
+.hcg-icon-rounded .hcg-card__icon { border-radius: 18px; }
+.hcg-icon-square  .hcg-card__icon { border-radius: 8px; }
+.hcg-icon-none    .hcg-card__icon { background: transparent; }
+
+.hcg-card:hover .hcg-card__icon {
+    background: var(--cat-color);
+    transform: scale(1.07) rotate(-3deg);
+}
+.hcg-icon-none .hcg-card:hover .hcg-card__icon { background: transparent; transform: scale(1.1); }
+
+.hcg-card__icon i {
+    font-size: calc(var(--icon-size, 76px) * 0.4);
+    color: var(--cat-color);
+    transition: color .22s;
+}
+.hcg-card:hover .hcg-card__icon i { color: #fff; }
+.hcg-icon-none .hcg-card__icon i { font-size: calc(var(--icon-size, 76px) * 0.5); }
+.hcg-icon-none .hcg-card:hover .hcg-card__icon i { color: var(--cat-color); }
+
+.hcg-card__icon img {
+    width: 58%; height: 58%;
+    object-fit: contain;
+    transition: filter .22s;
+}
+.hcg-card:hover .hcg-card__icon img { filter: brightness(0) invert(1); }
+.hcg-icon-none .hcg-card:hover .hcg-card__icon img { filter: none; }
+
+/* ─── Body ─── */
+.hcg-card__body { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+.hcg-card__title {
+    font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+    font-size: .9rem;
+    font-weight: 700;
+    color: #1A1D2E;
+    margin: 0;
+    line-height: 1.25;
+    transition: color .22s;
+}
+.hcg-card:hover .hcg-card__title { color: var(--cat-color); }
+
+.hcg-card__desc {
+    font-size: .72rem;
+    color: #8B91A8;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.hcg-card__count {
+    display: inline-flex;
+    align-items: center;
+    font-size: .68rem;
+    font-weight: 700;
+    color: var(--cat-color);
+    background: var(--c-light);
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-top: 3px;
+    transition: background .22s, color .22s;
+}
+.hcg-card:hover .hcg-card__count { background: var(--cat-color); color: #fff; }
+
+/* ─── Ok ─── */
+.hcg-card__arrow {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #F0F1F6;
+    display: flex; align-items: center; justify-content: center;
+    color: #C0C6D8;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity .22s, transform .22s, background .22s, color .22s;
+}
+.hcg-card:hover .hcg-card__arrow {
+    opacity: 1; transform: translateX(0);
+    background: var(--cat-color); color: #fff;
+}
+
+/* ─── Alt kategoriler ─── */
+.hcg-card__subs { display: none; }
+
+/* ════════════════════════════════════
+   STİL: card-inline (kare değil, yatay)
+════════════════════════════════════ */
+.hcg-style-card-inline .hcg-card {
+    aspect-ratio: unset;
+    flex-direction: row;
+    text-align: left;
+    padding: 16px 18px;
+    gap: 14px;
+    align-items: center;
+    justify-content: flex-start;
+}
+.hcg-style-card-inline .hcg-card__icon {
+    width: calc(var(--icon-size, 76px) * 0.75);
+    height: calc(var(--icon-size, 76px) * 0.75);
+    flex-shrink: 0;
+    border-radius: 14px;
+}
+.hcg-style-card-inline .hcg-card__body { align-items: flex-start; }
+.hcg-style-card-inline .hcg-card__arrow { position: static; opacity: 1; transform: none; background: transparent; color: var(--cat-color); margin-left: auto; }
+.hcg-style-card-inline .hcg-card:hover .hcg-card__arrow { background: transparent; color: var(--cat-color); }
+
+/* ════════════════════════════════════
+   STİL: card-minimal
+════════════════════════════════════ */
+.hcg-style-card-minimal .hcg-card {
+    padding: 16px 10px;
+    gap: 7px;
+    border-radius: 14px;
+}
+.hcg-style-card-minimal .hcg-card__icon {
+    width: calc(var(--icon-size, 76px) * 0.65);
+    height: calc(var(--icon-size, 76px) * 0.65);
+    background: transparent;
+}
+.hcg-style-card-minimal .hcg-card:hover .hcg-card__icon { background: var(--c-light); transform: none; }
+.hcg-style-card-minimal .hcg-card__desc { display: none; }
+
+/* ════════════════════════════════════
+   STİL: card-hero (büyük, kare değil)
+════════════════════════════════════ */
+.hcg-style-card-hero .hcg-card {
+    aspect-ratio: unset;
+    padding: 36px 20px 28px;
+    border-radius: 24px;
+    border-width: 2px;
+    gap: 14px;
+}
+.hcg-style-card-hero .hcg-card__icon {
+    width: calc(var(--icon-size, 76px) * 1.2);
+    height: calc(var(--icon-size, 76px) * 1.2);
+    border-radius: 24px;
+}
+.hcg-style-card-hero .hcg-card__title { font-size: 1.1rem; }
+
+/* ════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════ */
+@media (max-width: 600px) {
+    .hcg-card { border-radius: 14px; }
+    .hcg-card__title { font-size: .8rem; }
+    .hcg-card__arrow { display: none; }
+    .hcg-style-card-inline .hcg-card { flex-direction: column; text-align: center; justify-content: center; }
+    .hcg-style-card-inline .hcg-card__body { align-items: center; }
+    .hcg-style-card-inline .hcg-card__arrow { display: none; }
+}

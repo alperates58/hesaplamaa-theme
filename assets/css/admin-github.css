@@ -1,0 +1,79 @@
+.htheme-admin-wrap {
+    max-width: 1220px;
+}
+
+.htheme-page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 18px 0 22px;
+}
+
+.htheme-page-head h1 {
+    margin: 0 0 6px;
+}
+
+.htheme-page-subtitle {
+    margin: 0;
+    color: #50575e;
+    font-size: 14px;
+}
+
+.htheme-page-publisher {
+    min-width: 180px;
+    padding: 14px 16px;
+    border: 1px solid #dcdcde;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f6f7f7 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.htheme-page-publisher-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #646970;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.htheme-card {
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    border: 1px solid #dcdcde;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.htheme-card h2 {
+    margin: 0 0 18px;
+    color: #0f172a;
+}
+
+.htheme-update-box {
+    border-left: 4px solid #2271b1;
+}
+
+.htheme-update-btn {
+    min-height: 42px;
+    padding-inline: 18px !important;
+    font-weight: 600;
+}
+
+.htheme-version-result {
+    margin-left: 10px;
+    line-height: 30px;
+}
+
+@media (max-width: 782px) {
+    .htheme-page-head {
+        display: block;
+    }
+
+    .htheme-page-publisher {
+        max-width: 260px;
+        margin-top: 14px;
+    }
+}
