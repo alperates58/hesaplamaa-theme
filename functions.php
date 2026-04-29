@@ -170,6 +170,18 @@ function htheme_widgets_init() {
 }
 add_action( 'widgets_init', 'htheme_widgets_init' );
 
+function htheme_category_posts_per_page( $query ) {
+    if ( is_admin() || ! $query->is_main_query() || ! $query->is_category() ) {
+        return;
+    }
+
+    $posts_per_page = min( 60, max( 3, absint( get_theme_mod( 'htheme_archive_posts_per_page', 12 ) ) ) );
+    if ( $posts_per_page > 0 ) {
+        $query->set( 'posts_per_page', $posts_per_page );
+    }
+}
+add_action( 'pre_get_posts', 'htheme_category_posts_per_page' );
+
 /* ── Helpers ── */
 function htheme_cat_class( $slug ) {
     $map = ['matematik'=>'cat-matematik','saglik'=>'cat-saglik','sağlık'=>'cat-saglik',

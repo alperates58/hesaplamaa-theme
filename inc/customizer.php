@@ -295,3 +295,27 @@ function htheme_preview_js() { return "
     api('htheme_footer_padding_v',function(v){ v.bind(function(n){ setStyle('fpv','.site-footer{padding-top:'+n+'px;padding-bottom:'+Math.round(n*.5)+'px}'); }); });
 }(wp.customize));
 "; }
+
+add_action( 'customize_register', 'htheme_archive_count_customizer_register', 20 );
+function htheme_archive_count_customizer_register( $wp_customize ) {
+    $wp_customize->add_setting( 'htheme_archive_posts_per_page', [
+        'default'           => 12,
+        'sanitize_callback' => 'htheme_sanitize_posts_per_page',
+    ] );
+
+    $wp_customize->add_control( 'htheme_archive_posts_per_page', [
+        'label'       => 'Kategori sayfasinda gosterilecek yazi sayisi',
+        'description' => 'Kategori arsivlerinde her sayfada kac yazi listelenecegini belirler.',
+        'section'     => 'htheme_archive',
+        'type'        => 'number',
+        'input_attrs' => [
+            'min'  => 3,
+            'max'  => 60,
+            'step' => 1,
+        ],
+    ] );
+}
+
+function htheme_sanitize_posts_per_page( $value ) {
+    return min( 60, max( 3, absint( $value ) ) );
+}
