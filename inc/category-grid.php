@@ -109,7 +109,7 @@ function hcg_settings_page() {
     ?>
     <div class="wrap hcg-wrap">
         <h1>🗂 Kategori Grid Ayarları</h1>
-        <form method="post" action="options.php">
+        <form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
             <?php settings_fields('hcg_group'); ?>
 
             <div class="hcg-box">

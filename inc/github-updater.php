@@ -47,6 +47,7 @@ class HTheme_Github_Updater {
                 'nonce'    => wp_create_nonce( 'htheme_github_ajax_nonce' ),
                 'checking' => 'Kontrol ediliyor...',
                 'norepo'   => 'Once repo adresini kaydedin.',
+                'failed'   => 'Kontrol basarisiz.',
             ]
         );
     }
@@ -63,11 +64,13 @@ class HTheme_Github_Updater {
     }
 
     public function save_settings( $data ) {
+        $branch = sanitize_text_field( wp_unslash( $data['branch'] ?? 'main' ) );
+
         update_option(
             $this->option_key,
             [
-                'repo'   => sanitize_text_field( wp_unslash( $data['repo'] ?? '' ) ),
-                'branch' => sanitize_text_field( wp_unslash( $data['branch'] ?? 'main' ) ),
+                'repo'   => $this->sanitize_repo( $data['repo'] ?? '' ),
+                'branch' => $branch ? $branch : 'main',
                 'token'  => sanitize_text_field( wp_unslash( $data['token'] ?? '' ) ),
             ],
             false
@@ -75,24 +78,37 @@ class HTheme_Github_Updater {
     }
 
     public function handle_settings_save() {
-        if (
-            ! isset( $_POST['htheme_save_github'] ) ||
-            ! current_user_can( 'manage_options' )
-        ) {
+        if ( ! isset( $_POST['htheme_save_github'], $_POST['htheme_github_settings_action'] ) ) {
             return;
         }
 
-        check_admin_referer( 'htheme_save_github_settings' );
+        if ( 'save' !== sanitize_key( wp_unslash( $_POST['htheme_github_settings_action'] ) ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die(
+                esc_html__( 'Bu GitHub ayarlarini kaydetme yetkiniz yok.', 'hesaplamaa-theme' ),
+                esc_html__( 'Yetkisiz islem', 'hesaplamaa-theme' ),
+                [ 'response' => 403 ]
+            );
+        }
+
+        $this->verify_admin_nonce( 'htheme_save_github_settings' );
         $this->save_settings( $_POST );
 
-        wp_safe_redirect( admin_url( 'themes.php?page=' . $this->page_slug . '&saved=1' ) );
+        wp_safe_redirect( $this->get_page_url( [ 'saved' => 1 ] ) );
         exit;
     }
 
     public function get_remote_version() {
         $settings = $this->get_settings();
         if ( empty( $settings['repo'] ) ) {
-            return null;
+            return new WP_Error( 'htheme_missing_repo', 'Repo adresi bos. Once GitHub ayarlarindan repo adresini kaydedin.' );
+        }
+
+        if ( ! $this->is_valid_repo( $settings['repo'] ) ) {
+            return new WP_Error( 'htheme_invalid_repo', 'Repo adresi gecersiz. Ornek format: kullanici/repository' );
         }
 
         $url  = 'https://api.github.com/repos/' . rawurlencode( $settings['repo'] ) . '/commits/' . rawurlencode( $settings['branch'] );
@@ -110,41 +126,70 @@ class HTheme_Github_Updater {
         }
 
         $response = wp_remote_get( $url, $args );
-        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-            return null;
+        if ( is_wp_error( $response ) ) {
+            return new WP_Error(
+                'htheme_github_request_failed',
+                'GitHub API istegi basarisiz: ' . $response->get_error_message()
+            );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( 200 !== $code ) {
+            return new WP_Error(
+                'htheme_github_bad_response',
+                $this->get_github_response_message( $response )
+            );
         }
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( ! is_array( $body ) || empty( $body['sha'] ) ) {
+            return new WP_Error( 'htheme_github_invalid_response', 'GitHub API beklenen commit bilgisini dondurmedi.' );
+        }
+
         return $body['sha'] ?? null;
     }
 
     public function ajax_check_version() {
-        check_ajax_referer( 'htheme_github_ajax_nonce', 'nonce' );
+        if ( false === check_ajax_referer( 'htheme_github_ajax_nonce', 'nonce', false ) ) {
+            wp_send_json_error( [ 'message' => 'Gecersiz veya suresi dolmus guvenlik anahtari. Sayfayi yenileyip tekrar deneyin.' ], 400 );
+        }
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( [ 'message' => 'Yetkisiz.' ], 403 );
+            wp_send_json_error( [ 'message' => 'Bu kontrolu yapma yetkiniz yok.' ], 403 );
         }
 
         $sha = $this->get_remote_version();
+        if ( is_wp_error( $sha ) ) {
+            wp_send_json_error( [ 'message' => $sha->get_error_message() ], 400 );
+        }
+
         wp_send_json_success( [ 'sha' => $sha ? substr( $sha, 0, 7 ) : null ] );
     }
 
     public function handle_update() {
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( 'Yetkisiz.' );
+            wp_die(
+                esc_html__( 'Bu tema guncellemesini calistirma yetkiniz yok.', 'hesaplamaa-theme' ),
+                esc_html__( 'Yetkisiz islem', 'hesaplamaa-theme' ),
+                [ 'response' => 403 ]
+            );
         }
 
-        check_admin_referer( 'htheme_update_from_github' );
+        $this->verify_admin_nonce( 'htheme_update_from_github' );
         $result = $this->download_and_install( $this->get_settings() );
-        $status = true === $result ? 'success' : rawurlencode( $result );
+        $status = true === $result ? 'success' : $result;
 
-        wp_safe_redirect( admin_url( 'themes.php?page=' . $this->page_slug . '&update=' . $status ) );
+        wp_safe_redirect( $this->get_page_url( [ 'update' => $status ] ) );
         exit;
     }
 
     private function download_and_install( $settings ) {
         if ( empty( $settings['repo'] ) ) {
             return 'Repo ayari eksik.';
+        }
+
+        if ( ! $this->is_valid_repo( $settings['repo'] ) ) {
+            return 'Repo adresi gecersiz. Ornek format: kullanici/repository';
         }
 
         require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -161,26 +206,26 @@ class HTheme_Github_Updater {
             $args['headers']['Authorization'] = 'Bearer ' . $settings['token'];
         }
 
-        add_filter(
-            'http_request_args',
-            function( $request_args, $url ) use ( $zip_url, $args ) {
-                if ( $zip_url === $url ) {
-                    $request_args['timeout'] = $args['timeout'];
-                    $request_args['headers'] = array_merge( $request_args['headers'] ?? [], $args['headers'] );
-                }
-                return $request_args;
-            },
-            10,
-            2
-        );
+        $download_filter = function( $request_args, $url ) use ( $zip_url, $args ) {
+            if ( $zip_url === $url ) {
+                $request_args['timeout'] = $args['timeout'];
+                $request_args['headers'] = array_merge( $request_args['headers'] ?? [], $args['headers'] );
+            }
+            return $request_args;
+        };
 
+        add_filter( 'http_request_args', $download_filter, 10, 2 );
         $tmp = download_url( $zip_url, 60 );
+        remove_filter( 'http_request_args', $download_filter, 10 );
+
         if ( is_wp_error( $tmp ) ) {
             return $tmp->get_error_message();
         }
 
         global $wp_filesystem;
-        WP_Filesystem();
+        if ( ! WP_Filesystem() ) {
+            return 'WordPress dosya sistemi baslatilamadi.';
+        }
 
         $theme_root = get_theme_root( get_template() );
         $dest       = get_template_directory();
@@ -199,16 +244,23 @@ class HTheme_Github_Updater {
             return 'Indirilen paket acildi ancak beklenen klasor bulunamadi.';
         }
 
-        $wp_filesystem->delete( $dest, true );
+        $backup_dir = $dest . '-backup-' . time();
+
+        if ( ! @rename( $dest, $backup_dir ) ) {
+            $wp_filesystem->delete( $extracted_dir, true );
+            return 'Mevcut tema klasoru yedeklenemedi. Dosya izinlerini kontrol edin.';
+        }
 
         if ( ! @rename( $extracted_dir, $dest ) ) {
+            @rename( $backup_dir, $dest );
+            $wp_filesystem->delete( $extracted_dir, true );
             return 'Yeni tema klasoru yerine tasinamadi.';
         }
 
         $remote_sha = $this->get_remote_version();
         update_option( 'htheme_last_update', current_time( 'mysql' ), false );
         update_option( 'htheme_last_update_version', (string) time(), false );
-        if ( $remote_sha ) {
+        if ( $remote_sha && ! is_wp_error( $remote_sha ) ) {
             update_option( 'htheme_last_update_sha', $remote_sha, false );
         }
 
@@ -222,7 +274,58 @@ class HTheme_Github_Updater {
             @opcache_reset();
         }
 
+        $wp_filesystem->delete( $backup_dir, true );
+
         return true;
+    }
+
+    private function get_page_url( $args = [] ) {
+        return add_query_arg(
+            array_merge( [ 'page' => $this->page_slug ], $args ),
+            admin_url( 'themes.php' )
+        );
+    }
+
+    private function verify_admin_nonce( $action ) {
+        $nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+
+        if ( ! wp_verify_nonce( $nonce, $action ) ) {
+            wp_die(
+                esc_html__( 'Gecersiz veya suresi dolmus guvenlik anahtari. Sayfayi yenileyip tekrar deneyin.', 'hesaplamaa-theme' ),
+                esc_html__( 'Gecersiz istek', 'hesaplamaa-theme' ),
+                [ 'response' => 400 ]
+            );
+        }
+
+        check_admin_referer( $action );
+    }
+
+    private function is_valid_repo( $repo ) {
+        return (bool) preg_match( '/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/', (string) $repo );
+    }
+
+    private function sanitize_repo( $repo ) {
+        $repo = sanitize_text_field( wp_unslash( $repo ) );
+        $repo = preg_replace( '#^https?://github\.com/#i', '', $repo );
+        $repo = preg_replace( '#\.git$#i', '', $repo );
+
+        return trim( (string) $repo, " \t\n\r\0\x0B/" );
+    }
+
+    private function get_github_response_message( $response ) {
+        $code    = wp_remote_retrieve_response_code( $response );
+        $message = 'GitHub API yaniti: ' . (int) $code . '.';
+        $body    = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( is_array( $body ) && ! empty( $body['message'] ) ) {
+            $message .= ' ' . sanitize_text_field( $body['message'] );
+        }
+
+        if ( in_array( (int) $code, [ 401, 403, 404 ], true ) ) {
+            $message .= ' Repo adresini, branch adini ve token yetkisini kontrol edin.';
+        }
+
+        return $message;
     }
 
     public function render_page() {
@@ -257,8 +360,9 @@ class HTheme_Github_Updater {
             <div class="htheme-card">
                 <h2>GitHub Baglantisi</h2>
 
-                <form method="post">
+                <form method="post" action="<?php echo esc_url( $this->get_page_url() ); ?>">
                     <?php wp_nonce_field( 'htheme_save_github_settings' ); ?>
+                    <input type="hidden" name="htheme_github_settings_action" value="save" />
 
                     <table class="form-table">
                         <tr>

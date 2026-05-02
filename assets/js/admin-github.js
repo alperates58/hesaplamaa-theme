@@ -16,9 +16,17 @@
                     return;
                 }
 
+                if (response && response.data && response.data.message) {
+                    $result.text(response.data.message);
+                    return;
+                }
+
                 $result.text(hthemeGithub.norepo);
-            }).fail(function() {
-                $result.text('Kontrol basarisiz.');
+            }).fail(function(xhr) {
+                var response = xhr.responseJSON || {};
+                var data = response.data || {};
+
+                $result.text(data.message || hthemeGithub.failed);
             });
         });
     });
