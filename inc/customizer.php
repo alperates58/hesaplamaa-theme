@@ -176,6 +176,7 @@ function htheme_customizer_register( $wp_customize ) {
     c_select(   $wp_customize, 'htheme_related_cols',    'İlgili yazılar sütun', '3', [
         '2'=>'2 Sütun','3'=>'3 Sütun','4'=>'4 Sütun',
     ], 'htheme_single' );
+    c_checkbox( $wp_customize, 'htheme_sidebar_toc',    'Sidebar: İçindekiler (TOC)', true, 'htheme_single' );
     c_checkbox( $wp_customize, 'htheme_sidebar_search', 'Sidebar: Arama', true, 'htheme_single' );
     c_checkbox( $wp_customize, 'htheme_sidebar_ad',     'Sidebar: Reklam alanı', true, 'htheme_single' );
     c_slider(   $wp_customize, 'htheme_sidebar_ad_height', 'Reklam alanı yüksekliği', 200, 80, 400, 10, 'px', 'htheme_single', Htheme_Slider_Control::class );
@@ -189,7 +190,7 @@ function htheme_customizer_register( $wp_customize ) {
     $wp_customize->add_section( 'htheme_archive', [
         'title' => '📂 Arşiv / Kategori', 'panel' => 'htheme_panel', 'priority' => 60,
     ] );
-    c_select( $wp_customize, 'htheme_archive_layout', 'Yazı Kartı Sütun Sayısı', '3col', [
+    c_select( $wp_customize, 'htheme_archive_layout', 'Yazı Kartı Sütun Sayısı', '2col', [
         '1col'=>'1 Sütun (liste)','2col'=>'2 Sütun','3col'=>'3 Sütun','4col'=>'4 Sütun',
     ], 'htheme_archive' );
     c_checkbox( $wp_customize, 'htheme_archive_show_thumb',   'Görsel göster', true, 'htheme_archive' );
