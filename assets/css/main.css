@@ -329,6 +329,8 @@ body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
 .sw-search input:focus{border-color:var(--color-primary)}
 .sw-search button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--color-primary);color:#fff;border:none;border-radius:var(--radius-md);cursor:pointer;}
 .ad-slot{height:200px;border:1.5px dashed var(--color-border);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--color-text-3);font-family:monospace;background:var(--color-bg);}
+.sidebar-ad{background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-xl);padding:16px 18px;}
+.sidebar-ad__label{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--color-text-2);margin-bottom:10px;}
 .sw-recent{display:flex;flex-direction:column;gap:9px}
 .sw-recent li{display:flex;align-items:flex-start;gap:9px}
 .rp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:8px}
