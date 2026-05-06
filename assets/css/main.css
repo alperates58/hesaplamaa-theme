@@ -399,8 +399,9 @@ body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
     line-height:1.3;
     transition:color .2s;
     overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
 }
 .calc-card__inner:hover .calc-card__title {
     color:var(--cat-color, var(--color-primary));
@@ -441,6 +442,95 @@ body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
     .calc-card__excerpt { display:none; }
     .calc-card__cat { display:none; }
 }
+
+/* ══ CALCULATOR DIRECTORY — inchcalculator "Popular Calculators" stili ══ */
+.calc-directory {
+    display:grid;
+    grid-template-columns:repeat(var(--dir-cols,3),1fr);
+    gap:16px;
+    margin:24px 0;
+}
+.calc-dir__section {
+    background:var(--color-surface);
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition:var(--transition);
+}
+.calc-dir__section:hover {
+    border-color:var(--cat-color, var(--color-primary));
+    box-shadow:0 4px 18px color-mix(in srgb, var(--cat-color, var(--color-primary)) 12%, transparent);
+}
+.calc-dir__header {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:13px 16px 11px;
+    border-bottom:1px solid var(--color-border);
+}
+.calc-dir__icon {
+    width:30px; height:30px;
+    border-radius:8px;
+    background:color-mix(in srgb, var(--cat-color, var(--color-primary)) 12%, #fff);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+}
+.calc-dir__icon i { font-size:.85rem; color:var(--cat-color, var(--color-primary)); }
+.calc-dir__icon img { width:65%; height:65%; object-fit:contain; }
+.calc-dir__cat-name {
+    font-size:.88rem;
+    font-weight:800;
+    color:var(--color-text);
+    text-decoration:none;
+    transition:color .2s;
+}
+.calc-dir__cat-name:hover { color:var(--cat-color, var(--color-primary)); }
+.calc-dir__list {
+    list-style:none;
+    margin:0; padding:5px 0;
+    flex:1;
+}
+.calc-dir__list li a {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    padding:7px 16px;
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--color-text-2);
+    text-decoration:none;
+    transition:var(--transition);
+}
+.calc-dir__list li a:hover {
+    background:color-mix(in srgb, var(--cat-color, var(--color-primary)) 6%, #fff);
+    color:var(--cat-color, var(--color-primary));
+}
+.calc-dir__list li a span { flex:1; min-width:0; }
+.calc-dir__list li a svg { flex-shrink:0; color:var(--color-border); transition:color .2s; }
+.calc-dir__list li a:hover svg { color:var(--cat-color, var(--color-primary)); }
+.calc-dir__see-all {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    padding:9px 16px;
+    border-top:1px solid var(--color-border);
+    font-size:.78rem;
+    font-weight:700;
+    color:var(--color-text-3);
+    text-decoration:none;
+    transition:var(--transition);
+    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+}
+.calc-dir__see-all:hover {
+    color:var(--cat-color, var(--color-primary));
+    background:color-mix(in srgb, var(--cat-color, var(--color-primary)) 5%, #fff);
+}
+@media (max-width:900px) { .calc-directory { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px) { .calc-directory { grid-template-columns:1fr; } }
 
 /* ══ TOC — İçindekiler Tablosu ══ */
 .toc-widget .toc-list {
