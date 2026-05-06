@@ -342,3 +342,83 @@ function hcg_render( $atts ) {
     <?php
     return ob_get_clean();
 }
+
+/* ═══ 6. SHORTCODE: [calculator_directory] ═══
+ * inchcalculator.com "Popular Calculators" stili:
+ * her kategori kutusu içinde o kategorinin son araçları listelenir.
+ * Kullanım: [calculator_directory columns="3" count="4"]
+ * ══════════════════════════════════════════════ */
+add_shortcode( 'calculator_directory', 'hcg_directory_render' );
+
+function hcg_directory_render( $atts ) {
+    $atts = shortcode_atts( [
+        'columns' => 3,
+        'count'   => 4,
+    ], $atts, 'calculator_directory' );
+
+    $opts  = get_option( 'hcg_settings', [] );
+    $cols  = max( 1, min( 4, intval( $atts['columns'] ) ) );
+    $count = max( 1, min( 10, intval( $atts['count'] ) ) );
+
+    $cats = get_categories( ['hide_empty' => true, 'parent' => 0] );
+    usort( $cats, function( $a, $b ) use ( $opts ) {
+        return ( $opts['order'][$a->term_id] ?? 99 ) - ( $opts['order'][$b->term_id] ?? 99 );
+    } );
+
+    ob_start();
+    ?>
+    <div class="calc-directory" style="--dir-cols:<?php echo $cols; ?>">
+        <?php foreach ( $cats as $cat ) :
+            $id    = $cat->term_id;
+            $icon  = $opts['icons'][$id]  ?? 'fa-solid fa-calculator';
+            $img   = $opts['images'][$id] ?? '';
+            $color = $opts['colors'][$id] ?? get_theme_mod( 'htheme_accent_color', '#FA6162' );
+
+            $posts = new WP_Query( [
+                'cat'            => $id,
+                'posts_per_page' => $count,
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+                'no_found_rows'  => true,
+                'update_post_meta_cache' => false,
+                'update_post_term_cache' => false,
+            ] );
+            if ( ! $posts->have_posts() ) continue;
+        ?>
+        <div class="calc-dir__section" style="--cat-color:<?php echo esc_attr( $color ); ?>">
+
+            <div class="calc-dir__header">
+                <div class="calc-dir__icon">
+                    <?php if ( $img ) : ?>
+                        <img src="<?php echo esc_url( $img ); ?>" alt="" loading="lazy">
+                    <?php else : ?>
+                        <i class="<?php echo esc_attr( $icon ); ?>" aria-hidden="true"></i>
+                    <?php endif; ?>
+                </div>
+                <a href="<?php echo esc_url( get_category_link( $id ) ); ?>" class="calc-dir__cat-name">
+                    <?php echo esc_html( $cat->name ); ?>
+                </a>
+            </div>
+
+            <ul class="calc-dir__list">
+                <?php while ( $posts->have_posts() ) : $posts->the_post(); ?>
+                <li>
+                    <a href="<?php the_permalink(); ?>">
+                        <span><?php the_title(); ?></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                    </a>
+                </li>
+                <?php endwhile; wp_reset_postdata(); ?>
+            </ul>
+
+            <a href="<?php echo esc_url( get_category_link( $id ) ); ?>" class="calc-dir__see-all">
+                Tümünü Gör
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}

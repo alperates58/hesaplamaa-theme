@@ -173,7 +173,7 @@ function htheme_customizer_register( $wp_customize ) {
     c_checkbox( $wp_customize, 'htheme_show_result_share', 'Sonuç paylaşım butonları', true, 'htheme_single' );
     c_checkbox( $wp_customize, 'htheme_show_related',    'İlgili yazılar bölümü', true, 'htheme_single' );
     c_slider(   $wp_customize, 'htheme_related_count',   'İlgili yazı sayısı', 3, 2, 8, 1, '', 'htheme_single', Htheme_Slider_Control::class );
-    c_select(   $wp_customize, 'htheme_related_cols',    'İlgili yazılar sütun', '3', [
+    c_select(   $wp_customize, 'htheme_related_cols',    'İlgili yazılar sütun', '2', [
         '2'=>'2 Sütun','3'=>'3 Sütun','4'=>'4 Sütun',
     ], 'htheme_single' );
     c_checkbox( $wp_customize, 'htheme_sidebar_toc',    'Sidebar: İçindekiler (TOC)', true, 'htheme_single' );
