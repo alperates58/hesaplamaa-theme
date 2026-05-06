@@ -100,6 +100,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { passive: true });
     }
 
+    /* ── TOC Scroll Spy ── */
+    (function() {
+        var tocLinks = document.querySelectorAll('.toc-widget .toc-list a');
+        if (!tocLinks.length) return;
+
+        var headings = [];
+        tocLinks.forEach(function(link) {
+            var id = link.getAttribute('href').slice(1);
+            var el = document.getElementById(id);
+            if (el) headings.push({ el: el, link: link });
+        });
+        if (!headings.length) return;
+
+        function updateActive() {
+            var scrollY = window.scrollY + 120;
+            var active  = null;
+            headings.forEach(function(h) {
+                if (h.el.offsetTop <= scrollY) active = h;
+            });
+            tocLinks.forEach(function(l) {
+                l.parentElement.classList.remove('toc-active');
+            });
+            if (active) active.link.parentElement.classList.add('toc-active');
+        }
+
+        window.addEventListener('scroll', updateActive, { passive: true });
+        updateActive();
+    })();
+
     /* Sonuc paylaşımı */
     var sharePanel = document.querySelector('[data-share-panel]');
     if (sharePanel) {

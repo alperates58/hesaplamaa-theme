@@ -9,6 +9,7 @@ $show_result_share = (bool)get_theme_mod('htheme_show_result_share', true);
 $show_related  = (bool)get_theme_mod('htheme_show_related', true);
 $related_count = absint(get_theme_mod('htheme_related_count', 3));
 $related_cols  = get_theme_mod('htheme_related_cols', '3');
+$show_s_toc    = (bool)get_theme_mod('htheme_sidebar_toc', true);
 $show_s_search = (bool)get_theme_mod('htheme_sidebar_search', true);
 $show_s_ad     = (bool)get_theme_mod('htheme_sidebar_ad', true);
 $show_s_recent = (bool)get_theme_mod('htheme_sidebar_recent', true);
@@ -123,6 +124,14 @@ $has_sidebar   = in_array($layout, ['sidebar-right','sidebar-left']);
     <!-- ─── Sidebar ─── -->
     <?php if ($has_sidebar): ?>
     <aside class="single-sidebar" role="complementary">
+
+        <!-- TOC — İçindekiler, içerik 2+ başlık içeriyorsa otomatik göster -->
+        <?php if ($show_s_toc): $toc = htheme_get_toc(); if ($toc): ?>
+        <div class="sidebar-widget toc-widget">
+            <h3 class="sidebar-widget-title">İçindekiler</h3>
+            <?php echo $toc; ?>
+        </div>
+        <?php endif; endif; ?>
 
         <?php if ($show_s_search): ?>
         <div class="sidebar-widget">

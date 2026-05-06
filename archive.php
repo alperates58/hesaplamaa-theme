@@ -1,7 +1,7 @@
 <?php get_header(); ?>
 
 <?php
-$arc_layout      = get_theme_mod('htheme_archive_layout', '3col');
+$arc_layout      = get_theme_mod('htheme_archive_layout', '2col');
 $show_thumb      = (bool)get_theme_mod('htheme_archive_show_thumb', true);
 $show_excerpt    = (bool)get_theme_mod('htheme_archive_show_excerpt', true);
 $show_arc_sidebar= (bool)get_theme_mod('htheme_archive_show_sidebar', false);

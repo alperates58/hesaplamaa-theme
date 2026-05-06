@@ -212,6 +212,62 @@ function htheme_breadcrumb() {
     echo '</ol></nav>';
 }
 
+/* ── İçindekiler Tablosu (TOC) ── */
+global $htheme_toc_html;
+$htheme_toc_html = '';
+
+function htheme_build_toc( $content ) {
+    global $htheme_toc_html;
+    $htheme_toc_html = '';
+
+    if ( ! is_single() ) return $content;
+    if ( ! preg_match_all( '/<h([23])([^>]*)>(.*?)<\/h\1>/is', $content, $matches, PREG_SET_ORDER ) ) {
+        return $content;
+    }
+    if ( count( $matches ) < 2 ) return $content;
+
+    $items    = [];
+    $new      = $content;
+    $used_ids = [];
+
+    foreach ( $matches as $m ) {
+        $level   = (int) $m[1];
+        $attrs   = $m[2];
+        $inner   = $m[3];
+        $text    = wp_strip_all_tags( $inner );
+        $base_id = sanitize_title( $text );
+        $id      = $base_id;
+        $n       = 1;
+        while ( in_array( $id, $used_ids, true ) ) { $id = $base_id . '-' . $n++; }
+        $used_ids[] = $id;
+        $items[]    = [ 'level' => $level, 'text' => $text, 'id' => $id ];
+
+        if ( strpos( $attrs, 'id=' ) === false ) {
+            $new = str_replace(
+                $m[0],
+                '<h' . $level . $attrs . ' id="' . esc_attr( $id ) . '">' . $inner . '</h' . $level . '>',
+                $new
+            );
+        }
+    }
+
+    $html = '<ol class="toc-list">';
+    foreach ( $items as $item ) {
+        $cls  = $item['level'] === 3 ? ' class="toc-sub"' : '';
+        $html .= '<li' . $cls . '><a href="#' . esc_attr( $item['id'] ) . '">' . esc_html( $item['text'] ) . '</a></li>';
+    }
+    $html .= '</ol>';
+    $htheme_toc_html = $html;
+
+    return $new;
+}
+add_filter( 'the_content', 'htheme_build_toc', 5 );
+
+function htheme_get_toc() {
+    global $htheme_toc_html;
+    return $htheme_toc_html;
+}
+
 add_filter( 'excerpt_length', fn() => 18 );
 add_filter( 'excerpt_more',   fn() => '…' );
 remove_action( 'wp_head',         'print_emoji_detection_script', 7 );
