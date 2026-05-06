@@ -9,14 +9,17 @@ $show_result_share = (bool)get_theme_mod('htheme_show_result_share', true);
 $show_related  = (bool)get_theme_mod('htheme_show_related', true);
 $related_count = absint(get_theme_mod('htheme_related_count', 3));
 $related_cols  = get_theme_mod('htheme_related_cols', '2');
-$show_s_toc       = (bool)get_theme_mod('htheme_sidebar_toc', true);
-$show_s_ad        = (bool)get_theme_mod('htheme_sidebar_ad', true);
-$show_s_ad2       = (bool)get_theme_mod('htheme_sidebar_ad2', true);
-$show_s_widget    = (bool)get_theme_mod('htheme_sidebar_widget_area', false);
-$has_sidebar      = in_array($layout, ['sidebar-right','sidebar-left']);
+$show_s_toc    = (bool)get_theme_mod('htheme_sidebar_toc', true);
+$show_s_widget = (bool)get_theme_mod('htheme_sidebar_widget_area', false);
+$has_sidebar   = in_array($layout, ['sidebar-right','sidebar-left']);
+$banner_code   = wp_unslash(get_theme_mod('htheme_adsense_banner', ''));
 ?>
 
 <?php if ($show_bc) htheme_breadcrumb(); ?>
+
+<?php if ($banner_code): ?>
+<div class="single-banner-ad"><?php echo $banner_code; ?></div>
+<?php endif; ?>
 
 <div class="single-wrap single-<?php echo esc_attr($layout); ?>">
 
@@ -130,19 +133,8 @@ $has_sidebar      = in_array($layout, ['sidebar-right','sidebar-left']);
         </div>
         <?php endif; endif; ?>
 
-        <?php if ($show_s_ad): ?>
-        <div class="sidebar-ad">
-            <span class="sidebar-ad__label">Reklam</span>
-            <div class="ad-slot"></div>
-        </div>
-        <?php endif; ?>
-
-        <?php if ($show_s_ad2): ?>
-        <div class="sidebar-ad">
-            <span class="sidebar-ad__label">Reklam</span>
-            <div class="ad-slot"></div>
-        </div>
-        <?php endif; ?>
+        <?php htheme_sidebar_ad('htheme_adsense_sidebar_1', 'htheme_sidebar_ad'); ?>
+        <?php htheme_sidebar_ad('htheme_adsense_sidebar_2', 'htheme_sidebar_ad2'); ?>
 
         <?php if ($show_s_widget && is_active_sidebar('sidebar-single')):
             dynamic_sidebar('sidebar-single');

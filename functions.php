@@ -4,7 +4,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'HTHEME_VERSION', '3.1.2' );
+define( 'HTHEME_VERSION', '3.1.3' );
 define( 'HTHEME_DIR',     get_template_directory() );
 define( 'HTHEME_URL',     get_template_directory_uri() );
 
@@ -266,6 +266,28 @@ add_filter( 'the_content', 'htheme_build_toc', 5 );
 function htheme_get_toc() {
     global $htheme_toc_html;
     return $htheme_toc_html;
+}
+
+/* ── AdSense / Reklam ── */
+add_action( 'wp_head', function() {
+    $code = get_theme_mod( 'htheme_adsense_head', '' );
+    if ( $code ) {
+        echo "\n" . wp_unslash( $code ) . "\n";
+    }
+}, 1 );
+
+function htheme_sidebar_ad( $slot_key, $show_toggle_key, $height_key = 'htheme_sidebar_ad_height' ) {
+    if ( ! (bool) get_theme_mod( $show_toggle_key, true ) ) return;
+    $code = wp_unslash( get_theme_mod( $slot_key, '' ) );
+    $h    = absint( get_theme_mod( $height_key, 250 ) );
+    echo '<div class="sidebar-ad">';
+    echo '<span class="sidebar-ad__label">Reklam</span>';
+    if ( $code ) {
+        echo '<div class="ad-slot ad-slot--filled">' . $code . '</div>';
+    } else {
+        echo '<div class="ad-slot" style="min-height:' . $h . 'px"></div>';
+    }
+    echo '</div>';
 }
 
 add_filter( 'excerpt_length', fn() => 18 );
