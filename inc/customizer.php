@@ -176,13 +176,11 @@ function htheme_customizer_register( $wp_customize ) {
     c_select(   $wp_customize, 'htheme_related_cols',    'İlgili yazılar sütun', '2', [
         '2'=>'2 Sütun','3'=>'3 Sütun','4'=>'4 Sütun',
     ], 'htheme_single' );
-    c_checkbox( $wp_customize, 'htheme_sidebar_toc',    'Sidebar: İçindekiler (TOC)', true, 'htheme_single' );
-    c_checkbox( $wp_customize, 'htheme_sidebar_search', 'Sidebar: Arama', true, 'htheme_single' );
-    c_checkbox( $wp_customize, 'htheme_sidebar_ad',     'Sidebar: Reklam alanı', true, 'htheme_single' );
-    c_slider(   $wp_customize, 'htheme_sidebar_ad_height', 'Reklam alanı yüksekliği', 200, 80, 400, 10, 'px', 'htheme_single', Htheme_Slider_Control::class );
-    c_checkbox( $wp_customize, 'htheme_sidebar_recent', 'Sidebar: Son eklenenler', true, 'htheme_single' );
-    c_slider(   $wp_customize, 'htheme_sidebar_recent_count', 'Son eklenen yazı sayısı', 8, 3, 20, 1, '', 'htheme_single', Htheme_Slider_Control::class );
-    c_checkbox( $wp_customize, 'htheme_sidebar_cats',   'Sidebar: Kategoriler', false, 'htheme_single' );
+    c_checkbox( $wp_customize, 'htheme_sidebar_toc',          'Sidebar: İçindekiler (TOC)', true,  'htheme_single' );
+    c_checkbox( $wp_customize, 'htheme_sidebar_ad',           'Sidebar: Reklam Alanı 1',   true,  'htheme_single' );
+    c_checkbox( $wp_customize, 'htheme_sidebar_ad2',          'Sidebar: Reklam Alanı 2',   true,  'htheme_single' );
+    c_slider(   $wp_customize, 'htheme_sidebar_ad_height',    'Reklam alanı yüksekliği', 200, 80, 400, 10, 'px', 'htheme_single', Htheme_Slider_Control::class );
+    c_checkbox( $wp_customize, 'htheme_sidebar_widget_area',  'Sidebar: Widget Alanı (tekil-yazı-sidebar)', false, 'htheme_single' );
 
     /* ══════════════════════════════════════════
        6. ARŞİV

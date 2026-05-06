@@ -9,13 +9,11 @@ $show_result_share = (bool)get_theme_mod('htheme_show_result_share', true);
 $show_related  = (bool)get_theme_mod('htheme_show_related', true);
 $related_count = absint(get_theme_mod('htheme_related_count', 3));
 $related_cols  = get_theme_mod('htheme_related_cols', '2');
-$show_s_toc    = (bool)get_theme_mod('htheme_sidebar_toc', true);
-$show_s_search = (bool)get_theme_mod('htheme_sidebar_search', true);
-$show_s_ad     = (bool)get_theme_mod('htheme_sidebar_ad', true);
-$show_s_recent = (bool)get_theme_mod('htheme_sidebar_recent', true);
-$s_recent_cnt  = absint(get_theme_mod('htheme_sidebar_recent_count', 8));
-$show_s_cats   = (bool)get_theme_mod('htheme_sidebar_cats', false);
-$has_sidebar   = in_array($layout, ['sidebar-right','sidebar-left']);
+$show_s_toc       = (bool)get_theme_mod('htheme_sidebar_toc', true);
+$show_s_ad        = (bool)get_theme_mod('htheme_sidebar_ad', true);
+$show_s_ad2       = (bool)get_theme_mod('htheme_sidebar_ad2', true);
+$show_s_widget    = (bool)get_theme_mod('htheme_sidebar_widget_area', false);
+$has_sidebar      = in_array($layout, ['sidebar-right','sidebar-left']);
 ?>
 
 <?php if ($show_bc) htheme_breadcrumb(); ?>
@@ -125,7 +123,6 @@ $has_sidebar   = in_array($layout, ['sidebar-right','sidebar-left']);
     <?php if ($has_sidebar): ?>
     <aside class="single-sidebar" role="complementary">
 
-        <!-- TOC — İçindekiler, içerik 2+ başlık içeriyorsa otomatik göster -->
         <?php if ($show_s_toc): $toc = htheme_get_toc(); if ($toc): ?>
         <div class="sidebar-widget toc-widget">
             <h3 class="sidebar-widget-title">İçindekiler</h3>
@@ -133,58 +130,23 @@ $has_sidebar   = in_array($layout, ['sidebar-right','sidebar-left']);
         </div>
         <?php endif; endif; ?>
 
-        <?php if ($show_s_search): ?>
-        <div class="sidebar-widget">
-            <h3 class="sidebar-widget-title">Ara</h3>
-            <form method="get" action="<?php echo esc_url(home_url('/')); ?>" class="sw-search">
-                <input type="search" name="s" placeholder="Hesaplama aracı…" value="<?php echo get_search_query(); ?>">
-                <button type="submit" aria-label="Ara">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                </button>
-            </form>
-        </div>
-        <?php endif; ?>
-
         <?php if ($show_s_ad): ?>
-        <div class="sidebar-widget">
-            <h3 class="sidebar-widget-title">Reklam</h3>
-            <div class="ad-slot">Reklam Alanı</div>
+        <div class="sidebar-ad">
+            <span class="sidebar-ad__label">Reklam</span>
+            <div class="ad-slot"></div>
         </div>
         <?php endif; ?>
 
-        <?php if ($show_s_recent):
-            $recent = new WP_Query(['posts_per_page'=>$s_recent_cnt,'post__not_in'=>[get_the_ID()]]);
-            if ($recent->have_posts()): ?>
-        <div class="sidebar-widget">
-            <h3 class="sidebar-widget-title">Son Eklenenler</h3>
-            <ul class="sw-recent">
-                <?php while ($recent->have_posts()): $recent->the_post(); ?>
-                <li>
-                    <span class="rp-dot" style="background:var(--color-primary)"></span>
-                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                </li>
-                <?php endwhile; wp_reset_postdata(); ?>
-            </ul>
-        </div>
-        <?php endif; endif; ?>
-
-        <?php if ($show_s_cats): ?>
-        <div class="sidebar-widget">
-            <h3 class="sidebar-widget-title">Kategoriler</h3>
-            <ul class="sw-cats">
-                <?php foreach (get_categories(['parent'=>0,'hide_empty'=>true]) as $c): ?>
-                <li>
-                    <a href="<?php echo esc_url(get_category_link($c->term_id)); ?>">
-                        <?php echo esc_html($c->name); ?>
-                        <span><?php echo $c->count; ?></span>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
+        <?php if ($show_s_ad2): ?>
+        <div class="sidebar-ad">
+            <span class="sidebar-ad__label">Reklam</span>
+            <div class="ad-slot"></div>
         </div>
         <?php endif; ?>
 
-        <?php if (is_active_sidebar('sidebar-single')) dynamic_sidebar('sidebar-single'); ?>
+        <?php if ($show_s_widget && is_active_sidebar('sidebar-single')):
+            dynamic_sidebar('sidebar-single');
+        endif; ?>
 
     </aside>
     <?php endif; ?>
