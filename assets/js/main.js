@@ -343,14 +343,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /* ── Sub-section accordion ── */
-    document.querySelectorAll('.sub-section__header').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = btn.closest('.sub-section');
-            var collapsed = section.classList.toggle('is-collapsed');
-            btn.setAttribute('aria-expanded', String(!collapsed));
+    /* ── Category page search filter ── */
+    var catSearch = document.getElementById('cat-search');
+    if (catSearch) {
+        catSearch.addEventListener('input', function() {
+            var q = this.value.toLowerCase().trim();
+            document.querySelectorAll('#cat-grid [data-name]').forEach(function(el) {
+                el.style.display = (!q || el.dataset.name.includes(q)) ? '' : 'none';
+            });
         });
-    });
+    }
 
 });
 })();
