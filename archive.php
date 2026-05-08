@@ -50,9 +50,10 @@ $has_subs = !empty($subs);
 
         <?php foreach ($subs as $sub):
             $sub_id    = (int)$sub->term_id;
-            $sub_icon  = $cgp_opts['icons'][$sub_id]  ?? 'fa-solid fa-calculator';
             $sub_color = $cgp_opts['colors'][$sub_id] ?? $cat_color;
-            $sub_img   = $cgp_opts['images'][$sub_id] ?? '';
+            // Her alt bölüm ana kategori ikonunu/resmini kullanır
+            $sub_icon  = $cat_icon;
+            $sub_img   = $cat_img;
 
             $sub_posts = get_posts([
                 'category'       => $sub_id,
