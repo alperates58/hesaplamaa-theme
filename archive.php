@@ -12,6 +12,13 @@ $arc_title= $is_cat ? $queried->name : get_the_archive_title();
 $arc_desc = $is_cat ? category_description($cat_id) : get_the_archive_description();
 $arc_count= $is_cat ? (int) $queried->count : (int) $GLOBALS['wp_query']->found_posts;
 
+// Customizer ayarları
+$show_search   = (bool) get_theme_mod('htheme_archive_show_search',      true);
+$subcard_tools = absint(get_theme_mod('htheme_archive_subcard_tools',    4));
+$show_card_desc   = (bool) get_theme_mod('htheme_archive_show_card_desc',    true);
+$show_card_seeall = (bool) get_theme_mod('htheme_archive_show_card_seeall',  true);
+$show_excerpt  = (bool) get_theme_mod('htheme_archive_show_excerpt',     true);
+
 $subs     = $cat_id ? get_categories(['parent'=>$cat_id,'hide_empty'=>true,'orderby'=>'name','order'=>'ASC']) : [];
 $has_subs = !empty($subs);
 ?>
@@ -40,12 +47,14 @@ $has_subs = !empty($subs);
             <span><?php echo $arc_count; ?> araç</span>
         </div>
     </div>
+    <?php if ($show_search): ?>
     <div class="cat-hero__search">
         <svg class="cat-hero__search-ico" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="search" id="cat-search"
                placeholder="<?php echo esc_attr($arc_title); ?> içinde ara…"
                autocomplete="off" aria-label="Kategori içinde ara">
     </div>
+    <?php endif; ?>
 </section>
 
 <?php if ($has_subs && $is_cat): ?>
@@ -68,7 +77,7 @@ $has_subs = !empty($subs);
         ]);
         if (empty($sub_posts)) continue;
         $total   = count($sub_posts);
-        $preview = array_slice($sub_posts, 0, 4);
+        $preview = array_slice($sub_posts, 0, $subcard_tools);
     ?>
     <article class="cat-subcard"
              style="--sub-color:<?php echo esc_attr($sub_color); ?>"
@@ -90,7 +99,7 @@ $has_subs = !empty($subs);
             </div>
         </div>
 
-        <?php if ($sub_desc): ?>
+        <?php if ($show_card_desc && $sub_desc): ?>
         <p class="cat-subcard__desc"><?php echo esc_html($sub_desc); ?></p>
         <?php endif; ?>
 
@@ -105,11 +114,13 @@ $has_subs = !empty($subs);
             <?php endforeach; ?>
         </ul>
 
+        <?php if ($show_card_seeall): ?>
         <a href="<?php echo esc_url(get_category_link($sub_id)); ?>" class="cat-subcard__footer">
             <span>Tümünü Gör</span>
             <span class="cat-subcard__footer-count"><?php echo $total; ?></span>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
         </a>
+        <?php endif; ?>
     </article>
     <?php endforeach; ?>
 
@@ -178,7 +189,7 @@ $has_subs = !empty($subs);
         </div>
         <div class="tool-flatcard__body">
             <span class="tool-flatcard__name"><?php the_title(); ?></span>
-            <?php if (has_excerpt()): ?>
+            <?php if ($show_excerpt && has_excerpt()): ?>
             <p class="tool-flatcard__excerpt"><?php echo wp_trim_words(get_the_excerpt(), 10, '…'); ?></p>
             <?php endif; ?>
         </div>

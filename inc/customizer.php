@@ -211,23 +211,33 @@ function htheme_customizer_register( $wp_customize ) {
         'title'       => '📂 Arşiv / Kategori',
         'panel'       => 'htheme_panel',
         'priority'    => 50,
-        'description' => 'Kategori listesi sayfasının görünümü.',
+        'description' => 'Kategori sayfasının hero, kart ve araç listesi ayarları.',
     ] );
-    c_select( $wp_customize, 'htheme_archive_layout', 'Yazı Kartı Sütun Sayısı', '2col', [
-        '1col' => '1 Sütun (liste)', '2col' => '2 Sütun',
-        '3col' => '3 Sütun',        '4col' => '4 Sütun',
+
+    // ── Hero ──
+    c_checkbox( $wp_customize, 'htheme_archive_show_search', 'Arama kutusunu göster', true, 'htheme_archive' );
+
+    // ── Alt kategori kartları ──
+    c_select( $wp_customize, 'htheme_archive_subcard_cols', 'Alt Kategori Sütun Sayısı', '2', [
+        '1' => '1 Sütun', '2' => '2 Sütun', '3' => '3 Sütun',
     ], 'htheme_archive' );
-    c_checkbox( $wp_customize, 'htheme_archive_show_thumb',   'Görsel göster',  true,  'htheme_archive' );
-    c_checkbox( $wp_customize, 'htheme_archive_show_excerpt', 'Özet göster',    true,  'htheme_archive' );
-    c_checkbox( $wp_customize, 'htheme_archive_show_sidebar', 'Sidebar göster', false, 'htheme_archive' );
+    c_slider( $wp_customize, 'htheme_archive_subcard_tools', 'Kartta kaç araç gösterilsin', 4, 2, 8, 1, '', 'htheme_archive', Htheme_Slider_Control::class );
+    c_checkbox( $wp_customize, 'htheme_archive_show_card_desc',    'Kart açıklamasını göster',   true,  'htheme_archive' );
+    c_checkbox( $wp_customize, 'htheme_archive_show_card_seeall',  '"Tümünü Gör" linkini göster', true,  'htheme_archive' );
+
+    // ── Alt kategorisi olmayan kategoriler (düz liste) ──
+    c_select( $wp_customize, 'htheme_archive_flat_cols', 'Düz Liste Sütun Sayısı', '2', [
+        '1' => '1 Sütun', '2' => '2 Sütun', '3' => '3 Sütun',
+    ], 'htheme_archive' );
+    c_checkbox( $wp_customize, 'htheme_archive_show_excerpt', 'Araç özeti göster (düz listede)', true, 'htheme_archive' );
 
     $wp_customize->add_setting( 'htheme_archive_posts_per_page', [
         'default'           => 12,
         'sanitize_callback' => 'htheme_sanitize_posts_per_page',
     ] );
     $wp_customize->add_control( 'htheme_archive_posts_per_page', [
-        'label'       => 'Sayfa başına yazı sayısı',
-        'description' => 'Kategori listesinde kaç yazı görünecek (3–60).',
+        'label'       => 'Sayfa başına araç sayısı (düz listede)',
+        'description' => '3–60 arası.',
         'section'     => 'htheme_archive',
         'type'        => 'number',
         'input_attrs' => [ 'min' => 3, 'max' => 60, 'step' => 1 ],

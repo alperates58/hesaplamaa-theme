@@ -101,6 +101,8 @@ function htheme_dynamic_css() {
     $grid_cols_d    = absint(get_theme_mod('htheme_grid_cols_desktop', 3));
     $grid_cols_t    = absint(get_theme_mod('htheme_grid_cols_tablet',  2));
     $grid_cols_m    = absint(get_theme_mod('htheme_grid_cols_mobile',  1));
+    $arc_subcard_cols = absint(get_theme_mod('htheme_archive_subcard_cols', 2));
+    $arc_flat_cols    = absint(get_theme_mod('htheme_archive_flat_cols',    2));
 
     $sidebar_w      = absint(get_theme_mod('htheme_single_sidebar_width', 320));
     $single_max     = absint(get_theme_mod('htheme_single_max_width',     900));
@@ -147,6 +149,9 @@ html { font-size: {$base_fs}px; }
 .hcg-card { padding: {$card_pad_v}px {$card_pad_h}px {$card_pad_b}px !important; border-radius: {$card_radius}px !important; }
 @media (max-width: 1024px) { .hcg-grid { grid-template-columns: repeat({$grid_cols_t}, 1fr) !important; } }
 @media (max-width: 600px) { .hcg-grid { grid-template-columns: repeat({$grid_cols_m}, 1fr) !important; } }
+.cat-subgrid { grid-template-columns: repeat({$arc_subcard_cols}, 1fr) !important; }
+.tool-flatgrid { grid-template-columns: repeat({$arc_flat_cols}, 1fr) !important; }
+@media (max-width: 720px) { .cat-subgrid, .tool-flatgrid { grid-template-columns: 1fr !important; } }
 @media (min-width: 1024px) {
   .single-sidebar-right { display:grid !important; grid-template-columns: 1fr {$sidebar_w}px !important; gap: 32px !important; align-items: start !important; }
   .single-sidebar-left  { display:grid !important; grid-template-columns: {$sidebar_w}px 1fr !important; gap: 32px !important; align-items: start !important; }
