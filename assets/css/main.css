@@ -32,7 +32,7 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:var(--font-body);font-size:16px;line-height:1.65;color:var(--color-text);background:var(--color-bg);-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);font-size:16px;line-height:1.65;color:var(--color-text);background:var(--color-bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{max-width:100%;height:auto;display:block}
 a{color:var(--color-primary);text-decoration:none;transition:var(--transition)}
 a:hover{color:var(--color-primary-d)}
@@ -124,7 +124,7 @@ body.admin-bar .site-header.is-sticky{top:32px}
 .mobile-nav.is-open{display:block}
 body.nav-open{overflow:hidden}
 body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
-.mobile-nav .container{padding-top:8px;padding-bottom:16px}
+.mobile-nav .container{padding-top:8px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
 
 .mobile-menu{display:flex;flex-direction:column;}
 .mobile-menu li{border-bottom:1px solid var(--color-border);}
@@ -149,7 +149,7 @@ body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
 .mobile-menu .menu-item-has-children.is-open .sub-menu{display:block}
 .mobile-menu .sub-menu li{border-bottom:none}
 .mobile-menu .sub-menu a{
-  display:block;padding:8px 4px;
+  display:flex;align-items:center;min-height:44px;padding:8px 4px;
   font-size:.875rem;font-weight:500;
   color:var(--color-text-2);
   text-decoration:none;
@@ -822,6 +822,10 @@ body.admin-bar .mobile-nav{top:calc(var(--header-h) + 32px)}
 @media (max-width:720px){
   :root{--header-h:60px}
   .page-hero h1{font-size:1.75rem}
+}
+@media (max-width:480px){
+  .page-hero h1{font-size:1.4rem}
+  .page-hero p{font-size:.95rem}
 }
 
 /* Mobil — single layout */
