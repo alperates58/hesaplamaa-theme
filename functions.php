@@ -37,6 +37,11 @@ add_action( 'after_setup_theme', 'htheme_setup' );
 
 /* ── Enqueue ── */
 function htheme_enqueue() {
+    // Her GitHub güncellemesinde cache kırmak için timestamp kullan.
+    // HTHEME_VERSION sabiti OpCache'de kalmış olsa bile bu option her
+    // güncellemede değiştiği için tarayıcı her zaman taze varlıkları alır.
+    $asset_ver = get_option( 'htheme_last_update_version', HTHEME_VERSION );
+
     // Google Fonts — seçilen fontları dinamik yükle
     $hfont = get_theme_mod('htheme_heading_font', 'Plus Jakarta Sans');
     $bfont = get_theme_mod('htheme_body_font',    'Nunito');
@@ -49,16 +54,16 @@ function htheme_enqueue() {
     wp_enqueue_style( 'hesaplamaa-fonts', $font_url, [], null );
 
     wp_enqueue_style( 'hesaplamaa-main',
-        HTHEME_URL . '/assets/css/main.css', ['hesaplamaa-fonts'], HTHEME_VERSION );
+        HTHEME_URL . '/assets/css/main.css', ['hesaplamaa-fonts'], $asset_ver );
     wp_enqueue_style( 'hesaplamaa-category-grid',
-        HTHEME_URL . '/assets/css/category-grid.css', ['hesaplamaa-main'], HTHEME_VERSION );
+        HTHEME_URL . '/assets/css/category-grid.css', ['hesaplamaa-main'], $asset_ver );
 
     if ( ! wp_style_is('font-awesome','enqueued') && ! wp_style_is('font-awesome-cgp','enqueued') ) {
         wp_enqueue_style( 'font-awesome',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css', [], '6.5.0' );
     }
     wp_enqueue_script( 'hesaplamaa-main',
-        HTHEME_URL . '/assets/js/main.js', [], HTHEME_VERSION, true );
+        HTHEME_URL . '/assets/js/main.js', [], $asset_ver, true );
     wp_localize_script( 'hesaplamaa-main', 'hthemeShare', [
         'siteName' => get_bloginfo('name'),
         'copied'   => 'Sonuç bağlantısı kopyalandı.',
