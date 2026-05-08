@@ -250,7 +250,7 @@ function hcg_render( $atts ) {
     $show_sub = !empty($opts['show_sub']);
 
     // Customizer ayarları
-    $grid_style  = get_theme_mod('htheme_grid_style',   'card-modern');
+    $grid_style  = get_theme_mod('htheme_grid_style',   'card-inline');
     $icon_shape  = get_theme_mod('htheme_icon_shape',   'rounded');
     $icon_size   = absint(get_theme_mod('htheme_icon_size', 76));
     $show_desc   = (bool)get_theme_mod('htheme_show_desc_grid',  true);
@@ -360,6 +360,13 @@ function hcg_directory_render( $atts ) {
     $cols  = max( 1, min( 4, intval( $atts['columns'] ) ) );
     $count = max( 1, min( 10, intval( $atts['count'] ) ) );
 
+    // Customizer ayarları
+    $orderby      = get_theme_mod( 'htheme_dir_orderby',       'date' );
+    $order        = get_theme_mod( 'htheme_dir_order',         'DESC' );
+    $show_see_all = (bool) get_theme_mod( 'htheme_dir_show_see_all', true );
+    $see_all_text = get_theme_mod( 'htheme_dir_see_all_text',  'Tümünü Gör' );
+    $show_count   = (bool) get_theme_mod( 'htheme_dir_show_count',   true );
+
     $cats = get_categories( ['hide_empty' => true, 'parent' => 0] );
     usort( $cats, function( $a, $b ) use ( $opts ) {
         return ( $opts['order'][$a->term_id] ?? 99 ) - ( $opts['order'][$b->term_id] ?? 99 );
@@ -377,8 +384,8 @@ function hcg_directory_render( $atts ) {
             $posts = new WP_Query( [
                 'cat'            => $id,
                 'posts_per_page' => $count,
-                'orderby'        => 'date',
-                'order'          => 'DESC',
+                'orderby'        => $orderby,
+                'order'          => $order,
                 'no_found_rows'  => true,
                 'update_post_meta_cache' => false,
                 'update_post_term_cache' => false,
@@ -398,6 +405,9 @@ function hcg_directory_render( $atts ) {
                 <a href="<?php echo esc_url( get_category_link( $id ) ); ?>" class="calc-dir__cat-name">
                     <?php echo esc_html( $cat->name ); ?>
                 </a>
+                <?php if ( $show_count ) : ?>
+                <span class="calc-dir__count"><?php echo intval( $cat->count ); ?></span>
+                <?php endif; ?>
             </div>
 
             <ul class="calc-dir__list">
@@ -411,10 +421,12 @@ function hcg_directory_render( $atts ) {
                 <?php endwhile; wp_reset_postdata(); ?>
             </ul>
 
+            <?php if ( $show_see_all ) : ?>
             <a href="<?php echo esc_url( get_category_link( $id ) ); ?>" class="calc-dir__see-all">
-                Tümünü Gör
+                <?php echo esc_html( $see_all_text ); ?>
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
             </a>
+            <?php endif; ?>
 
         </div>
         <?php endforeach; ?>
