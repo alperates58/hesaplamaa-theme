@@ -130,6 +130,14 @@ function htheme_customizer_register( $wp_customize ) {
         '1col' => '1 Sütun', '2col' => '2 Sütun', '3col' => '3 Sütun', '4col' => '4 Sütun',
     ], 'htheme_homepage' );
 
+    // ── Hesap Makinesi Dizini ──
+    c_checkbox( $wp_customize, 'htheme_show_directory',   'Hesap Makinesi Dizini bölümünü göster', true,  'htheme_homepage' );
+    c_text(     $wp_customize, 'htheme_directory_title',  'Dizin Bölümü Başlığı', 'Tüm Hesaplama Araçları', 'htheme_homepage' );
+    c_select(   $wp_customize, 'htheme_directory_cols',   'Dizin Sütun Sayısı', '3', [
+        '2' => '2 Sütun', '3' => '3 Sütun', '4' => '4 Sütun',
+    ], 'htheme_homepage' );
+    c_slider(   $wp_customize, 'htheme_directory_count',  'Her kategoride kaç araç', 5, 3, 10, 1, '', 'htheme_homepage', Htheme_Slider_Control::class );
+
     /* ══════════════════════════════════════════
        4. KATEGORİ GRİD
     ══════════════════════════════════════════ */
@@ -139,9 +147,9 @@ function htheme_customizer_register( $wp_customize ) {
         'priority'    => 40,
         'description' => '[category_grid] kısa kodunun görünümünü buradan ayarlayın.',
     ] );
-    c_select( $wp_customize, 'htheme_grid_style', 'Kart Stili', 'card-modern', [
+    c_select( $wp_customize, 'htheme_grid_style', 'Kart Stili', 'card-inline', [
+        'card-inline'  => '▶️ Yatay Premium (önerilen)',
         'card-modern'  => '⬛ Modern (ikon üstte, ortalı)',
-        'card-inline'  => '▶️ Yatay (ikon solda)',
         'card-minimal' => '○ Minimal',
         'card-hero'    => '🏆 Hero (büyük)',
     ], 'htheme_catgrid' );
@@ -151,13 +159,13 @@ function htheme_customizer_register( $wp_customize ) {
         'square'  => '■ Kare',
         'none'    => '✕ Arka plan yok',
     ], 'htheme_catgrid' );
-    c_select( $wp_customize, 'htheme_grid_cols_desktop', 'Masaüstü Kolon Sayısı', '6', [
+    c_select( $wp_customize, 'htheme_grid_cols_desktop', 'Masaüstü Kolon Sayısı', '3', [
         '2'=>'2', '3'=>'3', '4'=>'4', '5'=>'5', '6'=>'6',
     ], 'htheme_catgrid' );
-    c_select( $wp_customize, 'htheme_grid_cols_tablet', 'Tablet Kolon Sayısı (≤1024px)', '3', [
-        '2'=>'2', '3'=>'3', '4'=>'4',
+    c_select( $wp_customize, 'htheme_grid_cols_tablet', 'Tablet Kolon Sayısı (≤1024px)', '2', [
+        '1'=>'1', '2'=>'2', '3'=>'3', '4'=>'4',
     ], 'htheme_catgrid' );
-    c_select( $wp_customize, 'htheme_grid_cols_mobile', 'Mobil Kolon Sayısı (≤600px)', '2', [
+    c_select( $wp_customize, 'htheme_grid_cols_mobile', 'Mobil Kolon Sayısı (≤600px)', '1', [
         '1'=>'1', '2'=>'2', '3'=>'3',
     ], 'htheme_catgrid' );
     c_slider( $wp_customize, 'htheme_icon_size',      'İkon Alanı Boyutu',    76, 40, 130, 4, 'px', 'htheme_catgrid', Htheme_Slider_Control::class );
@@ -175,7 +183,29 @@ function htheme_customizer_register( $wp_customize ) {
     c_checkbox( $wp_customize, 'htheme_card_bg_effect',  'Hover: arka plan tonu',   true, 'htheme_catgrid' );
 
     /* ══════════════════════════════════════════
-       5. ARŞİV / KATEGORİ
+       5. HESAP MAKİNESİ DİZİNİ
+    ══════════════════════════════════════════ */
+    $wp_customize->add_section( 'htheme_directory', [
+        'title'       => '📋 Hesap Makinesi Dizini',
+        'panel'       => 'htheme_panel',
+        'priority'    => 45,
+        'description' => '[calculator_directory] kısa kodunun davranış ve görünüm ayarları. Ana sayfadaki sütun sayısı / araç sayısı için Ana Sayfa bölümüne bakın.',
+    ] );
+    c_select( $wp_customize, 'htheme_dir_orderby', 'Araç Sıralama Kriteri', 'date', [
+        'date'  => '📅 Ekleme Tarihine Göre',
+        'title' => '🔤 Başlığa Göre (A→Z)',
+        'rand'  => '🎲 Rastgele',
+    ], 'htheme_directory' );
+    c_select( $wp_customize, 'htheme_dir_order', 'Sıra Yönü', 'DESC', [
+        'DESC' => 'Azalan (yeniden eskiye / Z→A)',
+        'ASC'  => 'Artan (eskiden yeniye / A→Z)',
+    ], 'htheme_directory' );
+    c_checkbox( $wp_customize, 'htheme_dir_show_see_all', '"Tümünü Gör" bağlantısını göster', true, 'htheme_directory' );
+    c_text(     $wp_customize, 'htheme_dir_see_all_text', '"Tümünü Gör" bağlantı metni', 'Tümünü Gör', 'htheme_directory' );
+    c_checkbox( $wp_customize, 'htheme_dir_show_count',   'Kategoride toplam araç sayısını göster', true, 'htheme_directory' );
+
+    /* ══════════════════════════════════════════
+       6. ARŞİV / KATEGORİ
     ══════════════════════════════════════════ */
     $wp_customize->add_section( 'htheme_archive', [
         'title'       => '📂 Arşiv / Kategori',

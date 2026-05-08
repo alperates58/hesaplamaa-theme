@@ -98,9 +98,9 @@ function htheme_dynamic_css() {
     $card_pad_h     = absint(get_theme_mod('htheme_card_padding_h', 14));
     $card_radius    = absint(get_theme_mod('htheme_card_radius',    20));
     $card_gap       = absint(get_theme_mod('htheme_card_gap',       14));
-    $grid_cols_d    = absint(get_theme_mod('htheme_grid_cols_desktop', 6));
-    $grid_cols_t    = absint(get_theme_mod('htheme_grid_cols_tablet',  3));
-    $grid_cols_m    = absint(get_theme_mod('htheme_grid_cols_mobile',  2));
+    $grid_cols_d    = absint(get_theme_mod('htheme_grid_cols_desktop', 3));
+    $grid_cols_t    = absint(get_theme_mod('htheme_grid_cols_tablet',  2));
+    $grid_cols_m    = absint(get_theme_mod('htheme_grid_cols_mobile',  1));
 
     $sidebar_w      = absint(get_theme_mod('htheme_single_sidebar_width', 320));
     $single_max     = absint(get_theme_mod('htheme_single_max_width',     900));

@@ -1,20 +1,20 @@
 /* =============================================
-   HCG — Kategori Grid Premium v3.0
+   HCG — Kategori Grid Premium v4.0
    ============================================= */
 
-/* ─── Grid — kolon sayısı dinamik CSS'ten gelir ─── */
+/* ─── Grid ─── */
 .hcg-grid {
     display: grid;
     gap: 14px;
-    margin: 24px 0;
-    /* grid-template-columns: functions.php dinamik CSS'ten override edilir */
+    margin: 0 0 8px;
 }
 
-/* ─── Kart ─── */
+/* ─── Kart (tüm stiller için ortak temel) ─── */
 .hcg-card {
     --cat-color: var(--color-accent);
     --c-light:   color-mix(in srgb, var(--cat-color) 12%, #fff);
-    --c-xlight:  color-mix(in srgb, var(--cat-color)  5%, #fff);
+    --c-xlight:  color-mix(in srgb, var(--cat-color)  6%, #fff);
+    --c-medium:  color-mix(in srgb, var(--cat-color) 22%, #fff);
 
     position: relative;
     display: flex;
@@ -24,21 +24,22 @@
     text-align: center;
     padding: 26px 14px 20px;
     gap: 10px;
-    aspect-ratio: 1; /* KARE */
+    aspect-ratio: 1;
     background: #fff;
     border: 1.5px solid #E8EBF4;
     border-radius: 20px;
     text-decoration: none;
     color: inherit;
     overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
     transition: transform .22s cubic-bezier(.4,0,.2,1),
                 border-color .22s, box-shadow .22s;
 }
 
-/* ── Hover ── */
+/* ── Hover (card-modern) ── */
 .hcg-hover-lift .hcg-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 14px 36px color-mix(in srgb, var(--cat-color) 22%, transparent);
+    box-shadow: 0 16px 40px color-mix(in srgb, var(--cat-color) 22%, transparent);
 }
 .hcg-card:hover { border-color: var(--cat-color); text-decoration: none; color: inherit; }
 
@@ -148,7 +149,7 @@
 }
 .hcg-card:hover .hcg-card__count { background: var(--cat-color); color: #fff; }
 
-/* ─── Ok ─── */
+/* ─── Ok (card-modern) ─── */
 .hcg-card__arrow {
     position: absolute;
     top: 10px; right: 10px;
@@ -170,26 +171,84 @@
 .hcg-card__subs { display: none; }
 
 /* ════════════════════════════════════
-   STİL: card-inline (kare değil, yatay)
+   STİL: card-inline — PREMIUM YATAY
 ════════════════════════════════════ */
 .hcg-style-card-inline .hcg-card {
     aspect-ratio: unset;
     flex-direction: row;
     text-align: left;
-    padding: 16px 18px;
-    gap: 14px;
+    padding: 16px 20px 16px 16px;
+    gap: 16px;
     align-items: center;
     justify-content: flex-start;
+    border-left: 4px solid var(--c-xlight);
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
 }
+
+.hcg-style-card-inline .hcg-card:hover {
+    border-left-color: var(--cat-color);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px color-mix(in srgb, var(--cat-color) 14%, transparent);
+}
+
 .hcg-style-card-inline .hcg-card__icon {
-    width: calc(var(--icon-size, 76px) * 0.75);
-    height: calc(var(--icon-size, 76px) * 0.75);
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
     border-radius: 14px;
+    transform: none;
 }
-.hcg-style-card-inline .hcg-card__body { align-items: flex-start; }
-.hcg-style-card-inline .hcg-card__arrow { position: static; opacity: 1; transform: none; background: transparent; color: var(--cat-color); margin-left: auto; }
-.hcg-style-card-inline .hcg-card:hover .hcg-card__arrow { background: transparent; color: var(--cat-color); }
+.hcg-style-card-inline .hcg-card:hover .hcg-card__icon {
+    transform: scale(1.05);
+}
+
+.hcg-style-card-inline .hcg-card__body {
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+}
+
+.hcg-style-card-inline .hcg-card__title {
+    font-size: .95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hcg-style-card-inline .hcg-card__desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: .74rem;
+}
+
+.hcg-style-card-inline .hcg-card__count {
+    margin-top: 3px;
+    font-size: .69rem;
+}
+
+.hcg-style-card-inline .hcg-card__arrow {
+    position: static;
+    opacity: .35;
+    transform: none;
+    background: transparent;
+    color: #9ca3af;
+    width: auto; height: auto;
+    border-radius: 0;
+    flex-shrink: 0;
+}
+.hcg-style-card-inline .hcg-card:hover .hcg-card__arrow {
+    opacity: 1;
+    background: transparent;
+    color: var(--cat-color);
+    transform: translateX(4px);
+}
+
+/* Üst şerit ve bg efekti yatay modda kapatılır */
+.hcg-style-card-inline.hcg-top-strip .hcg-card::before { display: none; }
+.hcg-style-card-inline.hcg-bg-effect .hcg-card::after  { display: none; }
 
 /* ════════════════════════════════════
    STİL: card-minimal
@@ -198,6 +257,7 @@
     padding: 16px 10px;
     gap: 7px;
     border-radius: 14px;
+    box-shadow: none;
 }
 .hcg-style-card-minimal .hcg-card__icon {
     width: calc(var(--icon-size, 76px) * 0.65);
@@ -208,7 +268,7 @@
 .hcg-style-card-minimal .hcg-card__desc { display: none; }
 
 /* ════════════════════════════════════
-   STİL: card-hero (büyük, kare değil)
+   STİL: card-hero (büyük)
 ════════════════════════════════════ */
 .hcg-style-card-hero .hcg-card {
     aspect-ratio: unset;
@@ -231,7 +291,12 @@
     .hcg-card { border-radius: 14px; }
     .hcg-card__title { font-size: .8rem; }
     .hcg-card__arrow { display: none; }
-    .hcg-style-card-inline .hcg-card { flex-direction: column; text-align: center; justify-content: center; }
-    .hcg-style-card-inline .hcg-card__body { align-items: center; }
+
+    .hcg-style-card-inline .hcg-card {
+        padding: 13px 14px 13px 12px;
+        gap: 12px;
+    }
+    .hcg-style-card-inline .hcg-card__desc { display: none; }
     .hcg-style-card-inline .hcg-card__arrow { display: none; }
+    .hcg-style-card-inline .hcg-card__icon { width: 44px; height: 44px; border-radius: 10px; }
 }

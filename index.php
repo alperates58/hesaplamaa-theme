@@ -1,11 +1,15 @@
 <?php get_header(); ?>
 <?php
-$show_hero   = (bool)get_theme_mod('htheme_show_hero', true);
-$hero_title  = get_theme_mod('htheme_hero_title', 'En Kullanışlı Hesaplama Araçları');
-$hero_sub    = get_theme_mod('htheme_hero_subtitle', 'Matematikten finansal hesaplamalara, sağlıktan günlük yaşama kadar — hızlı, doğru ve güvenilir.');
-$show_latest = (bool)get_theme_mod('htheme_show_latest', true);
-$latest_cnt  = absint(get_theme_mod('htheme_latest_count', 6));
-$latest_cols = get_theme_mod('htheme_latest_cols', '3col');
+$show_hero    = (bool)get_theme_mod('htheme_show_hero', true);
+$hero_title   = get_theme_mod('htheme_hero_title', 'En Kullanışlı Hesaplama Araçları');
+$hero_sub     = get_theme_mod('htheme_hero_subtitle', 'Matematikten finansal hesaplamalara, sağlıktan günlük yaşama kadar — hızlı, doğru ve güvenilir.');
+$show_latest  = (bool)get_theme_mod('htheme_show_latest', true);
+$latest_cnt   = absint(get_theme_mod('htheme_latest_count', 6));
+$latest_cols  = get_theme_mod('htheme_latest_cols', '3col');
+$show_dir     = (bool)get_theme_mod('htheme_show_directory', true);
+$dir_title    = get_theme_mod('htheme_directory_title', 'Tüm Hesaplama Araçları');
+$dir_cols     = absint(get_theme_mod('htheme_directory_cols', 3));
+$dir_count    = absint(get_theme_mod('htheme_directory_count', 5));
 ?>
 
 <?php if (is_front_page() && is_home()): ?>
@@ -26,7 +30,19 @@ $latest_cols = get_theme_mod('htheme_latest_cols', '3col');
     </section>
     <?php endif; ?>
 
-    <?php while (have_posts()): the_post(); the_content(); endwhile; ?>
+    <section class="hp-categories">
+        <h2 class="section-heading">Kategoriler</h2>
+        <?php while (have_posts()): the_post(); the_content(); endwhile; ?>
+    </section>
+
+    <?php if ($show_dir): ?>
+    <section class="hp-directory">
+        <?php if ($dir_title): ?>
+        <h2 class="section-heading"><?php echo esc_html($dir_title); ?></h2>
+        <?php endif; ?>
+        <?php echo do_shortcode('[calculator_directory columns="' . $dir_cols . '" count="' . $dir_count . '"]'); ?>
+    </section>
+    <?php endif; ?>
 
     <?php if ($show_latest):
         $latest = new WP_Query(['posts_per_page'=>$latest_cnt,'ignore_sticky_posts'=>1]);

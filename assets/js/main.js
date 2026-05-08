@@ -343,5 +343,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /* ── Sub-section accordion ── */
+    document.querySelectorAll('.sub-section__header').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = btn.closest('.sub-section');
+            var collapsed = section.classList.toggle('is-collapsed');
+            btn.setAttribute('aria-expanded', String(!collapsed));
+        });
+    });
+
 });
 })();
