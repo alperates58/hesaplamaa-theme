@@ -274,6 +274,22 @@ class HTheme_Github_Updater {
             @opcache_reset();
         }
 
+        // Popüler caching eklentilerini temizle
+        if ( function_exists( 'w3tc_flush_all' ) ) {
+            w3tc_flush_all();
+        }
+        if ( function_exists( 'wp_cache_clear_cache' ) ) {
+            wp_cache_clear_cache();
+        }
+        if ( function_exists( 'rocket_clean_domain' ) ) {
+            rocket_clean_domain();
+        }
+        if ( function_exists( 'autoptimize_clear_cache' ) ) {
+            autoptimize_clear_cache();
+        }
+        do_action( 'litespeed_purge_all' );
+        do_action( 'sg_cachepress_purge_cache' );
+
         $wp_filesystem->delete( $backup_dir, true );
 
         return true;
